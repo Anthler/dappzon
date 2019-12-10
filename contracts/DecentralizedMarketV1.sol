@@ -13,7 +13,6 @@ contract DecentalizedMarketV1{
     mapping(address => uint[]) public ownerStores;
     mapping(uint => Store) allStores;
     mapping(uint => uint) public storeProductCount;
-    //mapping(uint => Auction) auctions;
 
     struct Product{
         uint id;
@@ -21,7 +20,6 @@ contract DecentalizedMarketV1{
         string description;
         uint price;
         uint quantity;
-        //track buyers
         mapping(address => uint) buyers;
     }
 
@@ -100,11 +98,6 @@ contract DecentalizedMarketV1{
     uint amountToRefund = msg.value - _price;
     msg.sender.transfer(amountToRefund);
   }
-
-    //checkValue
-    //paidEnough
-    //verifyCaller
-
     // modifier validProduct(uintuint productId){
     //     require(productId < productCount, "Product with this id does not exist");
     //     _;
@@ -493,23 +486,3 @@ contract DecentalizedMarketV1{
         return storesCount;
     }
 }
-
-//spring security book
-
-
-// TODOS
-//Auction a paticular product(commit reveal pattern)
-//charge a fee from store owners and buyers
-//Accept ERC-20 tokens for purchases
-//Make owner multi signature wallet
-
-//Accepting ERC-20 Tokens
-    //get token at a specified address;
-    //check the balance of the payer
-    //transfer the amount to be paid to contract on behalf of buyer
-
-// Set up list of accounts on deployment
-//make sure only deployer can call self_destruct
-//make sure a number of admins approve this action before it kill contract
-
-
