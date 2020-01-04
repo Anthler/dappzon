@@ -88,12 +88,43 @@ contract("Store Contract", (accounts) => {
         })
     });
 
+    describe("updateProductPrice()", () => {
 
+        const productDesc = "My number 1 product";
+        const quantity = 10;
+        const price = 20;
+        const newPrice = 30;
+
+        beforeEach( async () =>{
+            await store.addProduct(productDesc, price, quantity, {from: owner});
+        });
+
+        describe("Tests access controls", () => {
+
+            it("Throws an error for non owner account", async ()=>{
+                try {
+                    await store.updateProductPrice(0, newPrice, {from: accounts[2]})
+                    assert.fail("addProduct is retricted to only owner");
+                } catch (err) {
+                    const expectedError = "Ownable: caller is not the owner";
+                    const reason = err.reason;
+                    assert.equal(expectedError, reason, "Reason must match expected error");
+                }
+            })
+        })
+
+        it("Sets product new price", async () => {
+            const product = await store.products(0);
+            assert.equal(product.price, price, "Product price must be equal to 20")
+            await store.updateProductPrice(0, newPrice, {from: owner});
+            const productUpdated = await store.products(0);
+            assert.equal(productUpdated.price, newPrice, "Product price must be equa to 30");
+        }); 
+    })
         //FUNCTIONS TESTING
 
-        // addProduct()
+
         // getProduct()
-        // updateProductPrice
         // buyProduct()
         // auctionProduct()
         // bid()
