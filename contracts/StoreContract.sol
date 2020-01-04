@@ -1,14 +1,15 @@
 pragma solidity 0.5.12;
 
 import "./DecentCoinToken.sol";
+import "@openzeppelin/contracts/ownership/Ownable.sol";
 
-contract Store{
+contract Store is Ownable {
 
-    string name;
-    string description;
-    bool isOpen;
+    string public name;
+    string public description;
+    bool public isOpen;
 
-    address payable storeOwner;
+    address payable public storeOwner;
     address payable public beneficiary;
 
     uint public productCount;
@@ -17,7 +18,7 @@ contract Store{
     mapping(uint => Auction) auctions;
     uint public auctionsCount;
 
-    //DecentCoinToken token;
+    DecentCoinToken token;
 
     event ProductPurchased(uint productId, address buyer);
     event ProductAdded(uint productId);
@@ -49,11 +50,6 @@ contract Store{
         address payable bidder;
     }
 
-    modifier onlyOwner(){
-        require(storeOwner == msg.sender, "Only store owners can perform this action");
-        _;
-    }
-
     modifier validProduct(uint productId){
         require(productId < productCount, "Product with this id does not exist");
         _;
@@ -71,11 +67,13 @@ contract Store{
     public
     {
         storeOwner = tx.origin;
+        _transferOwnership(storeOwner);
         name = _name;
         description = _description;
         beneficiary = _beneficiary;
         isOpen = true;
         //token = DecentCoinToken(_tokenAddress);
+        
     }
 
     function getProducts(uint productId) 
@@ -102,7 +100,6 @@ contract Store{
     ) 
         public 
         onlyOwner 
-        returns(uint)
     {
         uint productId = productCount;
         products[productId] = Product({

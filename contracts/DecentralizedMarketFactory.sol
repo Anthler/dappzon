@@ -1,6 +1,6 @@
 pragma solidity 0.5.12;
 
-import "./DecentralizedMarket.sol";
+import "./StoreContract.sol";
 
 contract DecentralizedMarketFactory{
 
