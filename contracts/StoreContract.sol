@@ -51,7 +51,7 @@ contract Store is Ownable {
     }
 
     modifier validProduct(uint productId){
-        require(productId < productCount, "Product with this id does not exist");
+        require(productId < productCount, "Invalid product ID");
         _;
     }
 
@@ -152,8 +152,8 @@ contract Store is Ownable {
     )  
         public 
         onlyOwner
+        validProduct(productId)
     {
-        require(productId < productCount, " Invalid product ID");
         require(products[productId].quantity > 0, "Not enough stock");
         uint auctionId = auctionsCount;
         auctions[auctionId] = Auction({

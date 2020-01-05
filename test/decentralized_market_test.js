@@ -167,10 +167,71 @@ contract("Store Contract", (accounts) => {
         })
 
     });
-        //FUNCTIONS TESTING
 
+    describe(" auctionProduct() ", () => {
+      
+        const value = web3.utils.toWei('0.900')
+
+        const productDesc = "My number 1 product";
+        const quantity = 10;
+        const price = 20;
+
+        const productDesc2 = "My number 1 product";
+        const quantity2 = 10;
+        const price2 = 40;
+
+        beforeEach( async () =>{
+            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.addProduct(productDesc2, price2, quantity2, {from: owner});
+        });
+
+        describe("Access controls", () => {
+
+            it("Throws an error for non owner account", async ()=>{
+                try {
+                    await store.auctionProduct(0, 1111111113443333, {from: accounts[5]})
+                    assert.fail("addProduct is retricted to only owner");
+                } catch (err) {
+                    const expectedError = "Ownable: caller is not the owner";
+                    const reason = err.reason;
+                    assert.equal(expectedError, reason, "Reason must match expected error");
+                }
+            })
+        })
+
+        it("Tests for invalid productId", async () => {
+            try {
+                await store.auctionProduct(10, 1111111113443333)
+                assert.fail("addProduct is retricted to only owner");
+            } catch (err) {
+                const expectedError = "Invalid product ID";
+                const reason = err.reason;
+                assert.equal(expectedError, reason, "Reason must match expected error");
+            }
+        });
+
+        it("Tests for out of stock product", async () => {
+            try {
+                await store.buyProduct(0,10, {from: owner, value:value});
+                await store.auctionProduct(0,1111112233434444,{from: owner})
+                assert.fail("product out of stock cannot be auctioned");
+            } catch (err) {
+                const expectedError = "Not enough stock";
+                const reason = err.reason;
+                assert.equal(expectedError, reason, "Reason must match expected error");
+            }
+
+        });
+
+        it("Tests for auctions count increment", async () => {
+            const auctionsCountBefore = await store.auctionsCount();
+            await store.auctionProduct(0,1111112233434444,{from: owner})
+            const auctionsCountAfter = await store.auctionsCount();
+            assert.equal(1, auctionsCountAfter - auctionsCountBefore, "Auctions count should be equal to 1");
+        })
+    })
+        //FUNCTIONS TESTING
         // getProduct()
-        // buyProduct()
         // auctionProduct()
         // bid()
         // withdrawBalance()
