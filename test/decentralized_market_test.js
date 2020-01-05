@@ -121,13 +121,57 @@ contract("Store Contract", (accounts) => {
             assert.equal(productUpdated.price, newPrice, "Product price must be equa to 30");
         }); 
     })
-        //FUNCTIONS TESTING
 
+    describe(" buyProduct() ", () =>{
+
+        const productDesc = "My number 1 product";
+        const quantity = 10;
+        const price = 20;
+        const value = web3.utils.toWei('0.500')
+
+        beforeEach( async () =>{
+            await store.addProduct(productDesc, price, quantity, {from: owner});
+        });
+
+        it("Test for product quantity decrease by quantity bought", async () => {
+            const productBefore = await store.products(0);
+            await store.buyProduct(0, 5, {from: accounts[5], value:value});
+            const productAfter = await store.products(0);
+            assert.equal(productAfter.quantity, productBefore.quantity - 5, "quantity must be 5");
+        });
+
+        it("Tests for insufficient eth", async () =>{
+            try {
+                await store.buyProduct(0,5, {from: accounts[5], value: web3.utils.toWei('0.000000000000000001')})
+                assert.fail("should only pass when eth provided is equal to sum of quantity amount")
+            } catch (err) {
+                const expectedError = "Not enough ether provided";
+                const reason = err.reason;
+                console.log(reason);
+                assert.equal(expectedError, reason, "Reason must match expected error");
+            }
+        })
+
+        it("Tests for contract balance after purchase", async () => {
+            const contractBalance = await web3.eth.getBalance(store.address);
+            await store.buyProduct(0, 5, {from: accounts[5], value:value});
+            const newBalance = await web3.eth.getBalance(store.address);
+            assert.equal(100, newBalance - contractBalance, "Balance must be equal to 500")
+        });
+
+        it("Emits ProductPurchased event", async () => {
+            const tx = await store.buyProduct(0, 5, {from: accounts[5], value:value}); 
+            expectedEvent = "ProductPurchased";
+            const actualEvent = tx.logs[0].event;
+            assert.equal(expectedEvent, actualEvent, "Should emit ProductPurchased event")
+        })
+
+    });
+        //FUNCTIONS TESTING
 
         // getProduct()
         // buyProduct()
         // auctionProduct()
         // bid()
         // withdrawBalance()
-        // getStoreAddress()
 })

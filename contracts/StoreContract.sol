@@ -55,6 +55,14 @@ contract Store is Ownable {
         _;
     }
 
+    modifier checkValue(uint _productId, uint _quantity) {
+    //refund them after pay for item (why it is before, _ checks for logic before func)
+    _;
+    uint _price = products[_productId].price * _quantity;
+    uint amountToRefund = msg.value - _price;
+    msg.sender.transfer(amountToRefund);
+  }
+
 
     function() external{ revert();}
 
@@ -73,7 +81,6 @@ contract Store is Ownable {
         beneficiary = _beneficiary;
         isOpen = true;
         //token = DecentCoinToken(_tokenAddress);
-        
     }
 
     function getProducts(uint productId) 
@@ -125,13 +132,13 @@ contract Store is Ownable {
         emit ProductPriceUpdated(newPrice);
     }
 
-    // check for paid enough
     function buyProduct( 
         uint productId, 
         uint quantity
     )   public 
         payable 
-        validProduct(productId) 
+        validProduct(productId)
+        checkValue(productId, quantity) 
     {
         require(msg.value >= products[productId].price * quantity, "Not enough ether provided");
         Product storage product = products[productId];
@@ -161,10 +168,11 @@ contract Store is Ownable {
     }
 
     //check for paid enough // meaning we must accept value argument in function
-    function bid(uint auctionId) public payable{
+    function bid(uint auctionId, uint amount) public payable{
+        require(msg.value >= amount, "You must provide ether equal to amount specified");
         require(!auctions[auctionId].finalized, "You cannot bid on finalized auctions");
         require(now <= auctions[auctionId].validUntil, "You cannot bid on auction");
-        require(msg.value > auctions[auctionId].highestBid, "You must provide ether more than current highest bidder" );
+        require(amount > auctions[auctionId].highestBid, "You must provide ether more than current highest bidder" );
         require(msg.sender != address(0), "Please provide a valid address" );
         auctions[auctionId].highestBidder = msg.sender;
         uint bidId = auctions[auctionId].bidsCount;
@@ -175,6 +183,9 @@ contract Store is Ownable {
         auctions[auctionId].highestBidder = msg.sender;
         auctions[auctionId].highestBid = msg.value;
         auctions[auctionId].bidsCount += 1;
+
+        uint amountToRefund = msg.value - amount;
+        if(amountToRefund > 0) msg.sender.transfer(amountToRefund);
         emit BidCreated(bidId);
     }
 
