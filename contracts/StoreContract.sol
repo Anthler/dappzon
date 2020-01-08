@@ -15,7 +15,7 @@ contract Store is Ownable {
     uint public productCount;
     mapping(uint => Product) public products;
 
-    mapping(uint => Auction) auctions;
+    mapping(uint => Auction) public auctions;
     uint public auctionsCount;
 
     DecentCoinToken token;
@@ -26,6 +26,7 @@ contract Store is Ownable {
     event ProductRemoved(uint productId);
     event AuctionCreated(uint productId);
     event BidCreated(uint bidId);
+    event AuctionEnded(address highestBidder, uint auctionId, uint highestBid);
 
     struct Product{
         uint id;
@@ -83,7 +84,7 @@ contract Store is Ownable {
         //token = DecentCoinToken(_tokenAddress);
     }
 
-    function getProducts(uint productId) 
+    function getProduct(uint productId) 
         public 
         view 
         returns(
@@ -164,29 +165,37 @@ contract Store is Ownable {
             finalized: false,
             bidsCount: 0
         });
+        products[productId].quantity -= 1;
         auctionsCount++;
     }
 
-    //check for paid enough // meaning we must accept value argument in function
     function bid(uint auctionId, uint amount) public payable{
         require(msg.value >= amount, "You must provide ether equal to amount specified");
         require(!auctions[auctionId].finalized, "You cannot bid on finalized auctions");
         require(now <= auctions[auctionId].validUntil, "You cannot bid on auction");
         require(amount > auctions[auctionId].highestBid, "You must provide ether more than current highest bidder" );
         require(msg.sender != address(0), "Please provide a valid address" );
-        auctions[auctionId].highestBidder = msg.sender;
+
         uint bidId = auctions[auctionId].bidsCount;
-        auctions[auctionId].bids[bidId] = Bid({auctionId: auctionId, amount: msg.value, bidder: msg.sender});
+        auctions[auctionId].bids[bidId] = Bid({auctionId: auctionId, amount: amount, bidder: msg.sender});
         if(auctions[auctionId].highestBid > 0 && auctions[auctionId].highestBidder != address(0)) {
             auctions[auctionId].highestBidder.transfer(auctions[auctionId].highestBid);
         }
         auctions[auctionId].highestBidder = msg.sender;
-        auctions[auctionId].highestBid = msg.value;
+        auctions[auctionId].highestBid = amount;
         auctions[auctionId].bidsCount += 1;
 
         uint amountToRefund = msg.value - amount;
         if(amountToRefund > 0) msg.sender.transfer(amountToRefund);
         emit BidCreated(bidId);
+    }
+
+    function finalizeAuction(uint _auctionId) public payable onlyOwner{
+        require(_auctionId < auctionsCount, "Invalid auction ID");
+        require(now > auctions[_auctionId].validUntil, "Auction can only finalize after validity period");
+        require(!auctions[_auctionId].finalized, "auction not finalized");
+        auctions[_auctionId].finalized = true;
+        emit AuctionEnded(auctions[_auctionId].highestBidder, _auctionId, auctions[_auctionId].highestBid);
     }
 
     function withdrawBalance() public payable onlyOwner{

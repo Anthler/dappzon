@@ -1,4 +1,10 @@
 const Store = artifacts.require("Store"); 
+const {
+    BN,
+    balance,          
+    expectEvent, 
+    expectRevert, 
+  } = require('@openzeppelin/test-helpers');
 
 contract("Store Contract", (accounts) => {
 
@@ -176,13 +182,8 @@ contract("Store Contract", (accounts) => {
         const quantity = 10;
         const price = 20;
 
-        const productDesc2 = "My number 1 product";
-        const quantity2 = 10;
-        const price2 = 40;
-
         beforeEach( async () =>{
             await store.addProduct(productDesc, price, quantity, {from: owner});
-            await store.addProduct(productDesc2, price2, quantity2, {from: owner});
         });
 
         describe("Access controls", () => {
@@ -228,11 +229,118 @@ contract("Store Contract", (accounts) => {
             await store.auctionProduct(0,1111112233434444,{from: owner})
             const auctionsCountAfter = await store.auctionsCount();
             assert.equal(1, auctionsCountAfter - auctionsCountBefore, "Auctions count should be equal to 1");
+        });
+    });
+
+    describe(" bid() ", () => {
+
+        const productDesc = "My number 1 product";
+        const quantity = 10;
+        const price = 20;
+
+        beforeEach( async () =>{
+            await store.addProduct(productDesc, price, quantity, {from: owner} );
+            await store.auctionProduct(0, 11211235634);
+            await store.bid(0, new BN(100), {from: accounts[5], value: new BN(100)} )
+        });
+
+        it("Tests for bids count increment", async () => {
+            const auction = await store.auctions(0)
+            assert.equal(1,auction.bidsCount, "Bids count must be exactly one");
+        });
+
+        it("Tests for bid amount", async () => {
+            const auction = await store.auctions(0)
+            assert.equal(100,auction.highestBid, "Highest bid must be equal to 100");
+        });
+
+        it("Tests for validity period", async () => {
+            const auction = await store.auctions(0)
+            assert.equal(11211235634, auction.validUntil, "Highest bid must be equal to 100");
+        })
+
+        it("Tests for amount less than highest bid", async () => {
+            await expectRevert.unspecified(store.bid(0, 50, {from: accounts[6], value: 50}))
+        });
+
+        it("Test for refund last highest bidder", async () => {
+            const balanceBefore = new BN( await balance.current(accounts[5]))
+            const auction = await store.auctions(0);
+            await store.bid(0, new BN(150), {from: accounts[6], value: new BN(150)})
+            const balanceAfter = new BN( await balance.current(accounts[5]));
+            const expectedBal = balanceBefore.add(new BN(auction.highestBid))
+            assert.equal(balanceAfter.toString(), expectedBal.toString(), `${balanceAfter} ${expectedBal}`)
+        })
+
+        it("Test for new highest bidder", async () => {
+            await store.bid(0, new BN(150), {from: accounts[6], value: new BN(150)})
+            const auction = await store.auctions(0);
+            assert.equal(auction.highestBidder, accounts[6], `Highest bidder ${auction.highestBidder} must be same as account ${accounts[6]} `)
+        })
+        // test for reject transaction when auction finalized
+    });
+
+    describe(" getProduct() ", () => {
+
+        const productDesc = "My number 1 product";
+        const quantity = 10;
+        const price = 20;
+
+        beforeEach( async () =>{
+            await store.addProduct(productDesc, price, quantity, {from: owner});
+        });
+
+        it("Tests for product ID", async () => {
+            const product =  await store.getProduct(0)
+            assert.equal(0, product._id, "Product id should be equal to 0")
+        })
+
+        it("Tests for product description", async () => {
+            const product =  await store.getProduct(0)
+            assert.equal(productDesc, product._description, `product description should match ${productDesc}`)
+        })
+
+        it("Tests for product price", async () => {
+            const product =  await store.getProduct(0)
+            assert.equal(price, product._price, `product price should be ${price}`)
+        });
+
+        it("Tests for product quantity", async () => {
+            const product =  await store.getProduct(0)
+            assert.equal(quantity, product._quantity, `product description should be ${quantity}`)
+        });
+    });
+
+    describe(" withdrawBalance() ", () => {
+
+        const productDesc = "My number 1 product";
+        const quantity = 10;
+        const price = 20;
+
+        beforeEach( async () =>{
+            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.buyProduct(0, 5,  {from: accounts[5], value: new BN(100)});
+        });
+
+        it("Tests for non-owner account", async () =>{
+            await expectRevert.unspecified( store.withdrawBalance({from:accounts[5] }))
+        });
+
+        it("Tests for beneficiary balance", async () =>{
+            const beneficiaryCurrentBalance = new BN(await balance.current(beneficiary));
+            const storeBalance =  new BN(await balance.current(store.address));
+            await store.withdrawBalance({from: owner})
+            const beneficiaryBalanceAfter = new BN(await balance.current(beneficiary));
+            const expectedBal = beneficiaryCurrentBalance.add(storeBalance)
+            assert.equal(beneficiaryBalanceAfter.toString(), expectedBal.toString(), `expected balace ${expectedBal} shoud be equal to ${beneficiaryBalanceAfter}`);
+        });
+    })
+
+    describe(" getStoreAddress() ", () => {
+
+        it("Tests store address", async () =>{
+           const address =  await store.getStoreAddress()
+           assert.equal(address, store.address, `Store address ${store.address} must match ${address}`)
         })
     })
-        //FUNCTIONS TESTING
-        // getProduct()
-        // auctionProduct()
-        // bid()
-        // withdrawBalance()
 })
