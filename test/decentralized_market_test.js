@@ -47,16 +47,17 @@ contract("Store Contract", (accounts) => {
         const productDesc = "My number 1 product";
         const quantity = 10;
         const price = 20;
+        const imageUrl = "google.com.img"
 
         beforeEach( async () =>{
-            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.addProduct(productDesc, price, quantity, imageUrl, {from: owner});
         })
 
         describe("Tests access controls", () => {
 
             it("Throws an error for non owner account", async ()=>{
                 try {
-                    await store.addProduct(productDesc, quantity, price, {from: accounts[2]})
+                    await store.addProduct(productDesc, quantity, price,imageUrl, {from: accounts[2]})
                     assert.fail("addProduct is retricted to only owner");
                 } catch (err) {
                     const expectedError = "Ownable: caller is not the owner";
@@ -81,13 +82,18 @@ contract("Store Contract", (accounts) => {
             assert.equal(product.quantity, quantity, "Qunatity must be equal to 10");
         })
 
+        it("Tests for product quantity", async () =>{
+            const product = await store.products(0);
+            assert.equal(product.imageUrl, imageUrl, "Qunatity must be equal to 10");
+        })
+
         it("Tests for product price", async () => {
             const product = await store.products(0, {from: owner})
             assert.equal(product.price, price, "product price must be equal to 20");
         });
 
         it("Emits ProductAdded event", async () => {
-            const tx = await store.addProduct(productDesc, price, quantity,{from: owner})
+            const tx = await store.addProduct(productDesc, price, quantity,imageUrl,{from: owner})
             const expectedEvent = "ProductAdded";
             const eventLogged = tx.logs[0].event;
             assert.equal(eventLogged, expectedEvent, `Event must match ${expectedEvent}`);
@@ -100,9 +106,10 @@ contract("Store Contract", (accounts) => {
         const quantity = 10;
         const price = 20;
         const newPrice = 30;
+        const imageUrl = "google.com.img"
 
         beforeEach( async () =>{
-            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.addProduct(productDesc, price, quantity,imageUrl, {from: owner});
         });
 
         describe("Tests access controls", () => {
@@ -134,9 +141,10 @@ contract("Store Contract", (accounts) => {
         const quantity = 10;
         const price = 20;
         const value = web3.utils.toWei('0.500')
+        const imageUrl = "google.com.img";
 
         beforeEach( async () =>{
-            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.addProduct(productDesc, price, quantity,imageUrl, {from: owner});
         });
 
         it("Test for product quantity decrease by quantity bought", async () => {
@@ -181,9 +189,10 @@ contract("Store Contract", (accounts) => {
         const productDesc = "My number 1 product";
         const quantity = 10;
         const price = 20;
+        const imageUrl = "google.com.img";
 
         beforeEach( async () =>{
-            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.addProduct(productDesc, price, quantity, imageUrl, {from: owner});
         });
 
         describe("Access controls", () => {
@@ -237,9 +246,10 @@ contract("Store Contract", (accounts) => {
         const productDesc = "My number 1 product";
         const quantity = 10;
         const price = 20;
+        const imageUrl = "google.com.img";
 
         beforeEach( async () =>{
-            await store.addProduct(productDesc, price, quantity, {from: owner} );
+            await store.addProduct(productDesc, price, quantity, imageUrl, {from: owner} );
             await store.auctionProduct(0, 11211235634);
             await store.bid(0, new BN(100), {from: accounts[5], value: new BN(100)} )
         });
@@ -277,7 +287,6 @@ contract("Store Contract", (accounts) => {
             const auction = await store.auctions(0);
             assert.equal(auction.highestBidder, accounts[6], `Highest bidder ${auction.highestBidder} must be same as account ${accounts[6]} `)
         })
-        // test for reject transaction when auction finalized
     });
 
     describe(" getProduct() ", () => {
@@ -285,9 +294,10 @@ contract("Store Contract", (accounts) => {
         const productDesc = "My number 1 product";
         const quantity = 10;
         const price = 20;
+        const imageUrl = "google.com.img"
 
         beforeEach( async () =>{
-            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.addProduct(productDesc, price, quantity,imageUrl, {from: owner});
         });
 
         it("Tests for product ID", async () => {
@@ -316,9 +326,10 @@ contract("Store Contract", (accounts) => {
         const productDesc = "My number 1 product";
         const quantity = 10;
         const price = 20;
+        const imageUrl = "google.com.img";
 
         beforeEach( async () =>{
-            await store.addProduct(productDesc, price, quantity, {from: owner});
+            await store.addProduct(productDesc, price, quantity,imageUrl, {from: owner});
             await store.buyProduct(0, 5,  {from: accounts[5], value: new BN(100)});
         });
 

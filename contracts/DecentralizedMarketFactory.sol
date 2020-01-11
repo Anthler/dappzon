@@ -4,7 +4,7 @@ import "./StoreContract.sol";
 
 contract DecentralizedMarketFactory{
 
-    event MarketplaceCreated(address indexed marketplaceAddress);
+    event StoreCreated(uint storeId, address indexed marketplaceAddress);
 
     address payable superAdmin;
 
@@ -13,7 +13,7 @@ contract DecentralizedMarketFactory{
 
     mapping(address => bool) public isAdmin;
     mapping(address => bool) public isApprovedStoreOwner;
-    mapping (address => Store[]) ownerStores;
+    mapping (address => Store[]) public ownerStores;
 
     modifier onlyAdmins(){
         require(isAdmin[msg.sender], "You are not an admin");
@@ -30,6 +30,10 @@ contract DecentralizedMarketFactory{
         _;
     }
 
+    constructor() public {
+        superAdmin = msg.sender;
+    }
+
 
     function createNewStore(
         address payable _beneficiary, 
@@ -42,8 +46,9 @@ contract DecentralizedMarketFactory{
         uint storeId = storesCount;
         Store store = new Store(_beneficiary, _name, _description);
         stores[storeId] = store;
-        ownerStores[tx.origin].push(store);
+        ownerStores[msg.sender].push(store);
         storesCount += 1;
+        emit StoreCreated(storeId, address(store));
     }
 
     function addAdmins(address _admin) public onlySuperAdmin{

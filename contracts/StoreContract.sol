@@ -33,6 +33,8 @@ contract Store is Ownable {
         string description;
         uint price;
         uint quantity;
+        string imageUrl;
+        address[] buyers;
     }
 
     struct Auction{
@@ -57,7 +59,6 @@ contract Store is Ownable {
     }
 
     modifier checkValue(uint _productId, uint _quantity) {
-    //refund them after pay for item (why it is before, _ checks for logic before func)
     _;
     uint _price = products[_productId].price * _quantity;
     uint amountToRefund = msg.value - _price;
@@ -91,7 +92,8 @@ contract Store is Ownable {
             uint _id, 
             string memory _description, 
             uint _price, 
-            uint _quantity
+            uint _quantity,
+            string memory _imageUrl
         )
     {
          Product memory product = products[productId];
@@ -99,23 +101,25 @@ contract Store is Ownable {
          _description = product.description;
          _price = product.price;
          _quantity = product.quantity;
+         _imageUrl = product.imageUrl;
     }
 
     function addProduct(
         string memory desc, 
         uint price, 
-        uint quantity
+        uint quantity,
+        string memory _imageUrl
     ) 
         public 
         onlyOwner 
     {
         uint productId = productCount;
-        products[productId] = Product({
-            id: productId,
-            description: desc,
-            price: price,
-            quantity: quantity
-        });
+        Product storage product = products[productId];
+        product.id = productId;
+        product.description = desc;
+        product.price = price;
+        product.quantity = quantity;
+        product.imageUrl = _imageUrl;
         productCount += 1;
         emit ProductAdded(productId);
     }
@@ -144,7 +148,12 @@ contract Store is Ownable {
         require(msg.value >= products[productId].price * quantity, "Not enough ether provided");
         Product storage product = products[productId];
         product.quantity -= quantity;
+        product.buyers.push(msg.sender);
         emit ProductPurchased(productId, msg.sender);
+    }
+
+    function getProductBuyers(uint productId) public view returns(address[] memory){
+        return products[productId].buyers;
     }
 
     function auctionProduct(
