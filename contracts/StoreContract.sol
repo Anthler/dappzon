@@ -18,7 +18,7 @@ contract Store is Ownable {
     mapping(uint => Auction) public auctions;
     uint public auctionsCount;
 
-    DecentCoinToken token;
+    DMCoinToken tokenContract;
 
     event ProductPurchased(uint productId, address buyer);
     event ProductAdded(uint productId);
@@ -34,6 +34,7 @@ contract Store is Ownable {
         uint price;
         uint quantity;
         string imageUrl;
+        uint sales;
         address[] buyers;
     }
 
@@ -71,8 +72,8 @@ contract Store is Ownable {
     constructor(
         address payable _beneficiary,
         string memory _name,
-        string memory _description
-        //address _tokenAddress
+        string memory _description,
+        address _tokenAddress
     ) 
     public
     {
@@ -82,7 +83,12 @@ contract Store is Ownable {
         description = _description;
         beneficiary = _beneficiary;
         isOpen = true;
-        //token = DecentCoinToken(_tokenAddress);
+        tokenContract = DMCoinToken(_tokenAddress);
+    }
+
+    function updateTokenAddress(address _tokenAddress) public onlyOwner(){
+        require(_tokenAddress != address(0), "Token contract address must be a valid address");
+        tokenContract = DMCoinToken(_tokenAddress);
     }
 
     function getProduct(uint productId) 
@@ -104,6 +110,15 @@ contract Store is Ownable {
          _imageUrl = product.imageUrl;
     }
 
+    function payWithDMCoinToken(uint _productId, uint _quantity) public{
+        uint price = products[_productId].price;
+        require(tokenContract.transferFrom(msg.sender, address(this),price *_quantity), "You must approve balance to this store address");
+        products[_productId].quantity -=1;
+        products[_productId].sales += 1;
+        products[_productId].buyers.push(msg.sender);
+        emit ProductPurchased(_productId, msg.sender);
+    }
+
     function addProduct(
         string memory desc, 
         uint price, 
@@ -120,6 +135,7 @@ contract Store is Ownable {
         product.price = price;
         product.quantity = quantity;
         product.imageUrl = _imageUrl;
+        product.sales = 0;
         productCount += 1;
         emit ProductAdded(productId);
     }
@@ -149,6 +165,7 @@ contract Store is Ownable {
         Product storage product = products[productId];
         product.quantity -= quantity;
         product.buyers.push(msg.sender);
+        product.sales += 1;
         emit ProductPurchased(productId, msg.sender);
     }
 
@@ -204,6 +221,7 @@ contract Store is Ownable {
         require(now > auctions[_auctionId].validUntil, "Auction can only finalize after validity period");
         require(!auctions[_auctionId].finalized, "auction not finalized");
         auctions[_auctionId].finalized = true;
+        products[auctions[_auctionId].productId].sales += 1; 
         emit AuctionEnded(auctions[_auctionId].highestBidder, _auctionId, auctions[_auctionId].highestBid);
     }
 

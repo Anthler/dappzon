@@ -38,13 +38,14 @@ contract DecentralizedMarketFactory{
     function createNewStore(
         address payable _beneficiary, 
         string memory _name ,
-        string memory _description
+        string memory _description,
+        address _tokenContract
     )
     public
     onlyApprovedStoreOwners
     {
         uint storeId = storesCount;
-        Store store = new Store(_beneficiary, _name, _description);
+        Store store = new Store(_beneficiary, _name, _description, _tokenContract);
         stores[storeId] = store;
         ownerStores[msg.sender].push(store);
         storesCount += 1;
