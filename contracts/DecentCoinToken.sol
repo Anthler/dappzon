@@ -7,7 +7,7 @@ contract DMCoinToken is ERC20 {
 
     using SafeMath for uint256;
 
-    string public name = "DecentCoin";
-    string public symbol = "DECOIN";
+    string public name = "DMCoin";
+    string public symbol = "DMOIN";
     uint public decimals = 18;
 }

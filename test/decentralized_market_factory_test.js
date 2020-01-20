@@ -1,4 +1,5 @@
 const Store = artifacts.require("Store");
+const DMCoinToken = artifacts.require("DMCoinToken");
 const DecentralizedMarketFactory = artifacts.require("DecentralizedMarketFactory");
 
 const {       
@@ -18,9 +19,11 @@ contract("DecentralizedMarketFactory", (accounts) => {
     const description = "My brand new store";
     const beneficiary = accounts[5];
     let factory;
+    let tokenContract;
 
     beforeEach(async () => {
         factory = await DecentralizedMarketFactory.new();
+        tokenContract = await DMCoinToken.new();
         assert(factory, "Factory contract not deployed")
     });
 
@@ -122,13 +125,13 @@ contract("DecentralizedMarketFactory", (accounts) => {
             })
 
             it("Tests stores count increment", async () => {
-                await factory.createNewStore(beneficiary, name, description, {from: store_owner_1});
+                await factory.createNewStore(beneficiary, name, description,tokenContract.address, {from: store_owner_1});
                 const storesCount = await factory.storesCount();
                 assert.equal(1, storesCount, `storesCount must be equal to 1`)
             })
 
             it("Tests for owner stores count", async () => {
-                await factory.createNewStore(beneficiary, name, description, {from: store_owner_1});
+                await factory.createNewStore(beneficiary, name, description, tokenContract.address, {from: store_owner_1});
                 const ownerStoresCount = await factory.getOwnerStoresCount(store_owner_1);
                 assert.equal(1, ownerStoresCount, `storesCount must be equal to 1`)
             })

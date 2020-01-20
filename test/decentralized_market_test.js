@@ -1,4 +1,5 @@
 const Store = artifacts.require("Store"); 
+const DMCoinToken = artifacts.require("DMCoinToken");
 const {
     BN,
     balance,          
@@ -9,6 +10,7 @@ const {
 contract("Store Contract", (accounts) => {
 
     let store;
+    let tokenContract;
     const name = "Original Store";
     const description = "original description";
     const owner = accounts[0];
@@ -16,7 +18,8 @@ contract("Store Contract", (accounts) => {
     const beneficiary = accounts[2];
 
     beforeEach(async () => {
-        store = await Store.new(beneficiary, name, description);
+        tokenContract = await DMCoinToken.new();
+        store = await Store.new(beneficiary, name, description, tokenContract.address);
     })
 
     describe("initialize contract", () => {

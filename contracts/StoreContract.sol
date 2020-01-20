@@ -86,11 +86,6 @@ contract Store is Ownable {
         tokenContract = DMCoinToken(_tokenAddress);
     }
 
-    function updateTokenAddress(address _tokenAddress) public onlyOwner(){
-        require(_tokenAddress != address(0), "Token contract address must be a valid address");
-        tokenContract = DMCoinToken(_tokenAddress);
-    }
-
     function getProduct(uint productId) 
         public 
         view 
@@ -117,6 +112,11 @@ contract Store is Ownable {
         products[_productId].sales += 1;
         products[_productId].buyers.push(msg.sender);
         emit ProductPurchased(_productId, msg.sender);
+    }
+
+    function updateTokenAddress(address _tokenAddress) public onlyOwner(){
+        require(_tokenAddress != address(0), "Token contract address must be a valid address");
+        tokenContract = DMCoinToken(_tokenAddress);
     }
 
     function addProduct(
