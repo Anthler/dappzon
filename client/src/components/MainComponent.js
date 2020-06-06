@@ -15,6 +15,8 @@ import StoreDetails from "./StoreDetails";
 import { loadWeb3, loadBlockchainData } from "../utils/init";
 import getWeb3 from "../utils/getWeb3";
 
+const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
+
 class Main extends Component {
   state = { 
     web3: null, 

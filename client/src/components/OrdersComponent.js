@@ -4,6 +4,8 @@ import Store from "../contracts/Store.json";
 import { loadWeb3 } from "../utils/init";
 import { Table } from "reactstrap";
 
+const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
+
 class Orders extends Component{
 
     state = {

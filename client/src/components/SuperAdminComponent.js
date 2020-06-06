@@ -5,6 +5,8 @@ import Store from "../contracts/Store.json";
 import { loadWeb3, loadBlockchainData } from "../utils/init";
 import { Label, Form, Input,Button, Modal, ModalHeader, ModalBody, FormGroup, Col } from "reactstrap";
 
+const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
+
 class SuperAdmin extends Component{
 
     state = {

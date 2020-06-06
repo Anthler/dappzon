@@ -6,6 +6,8 @@ import { loadWeb3, loadBlockchainData } from "../utils/init";
 import { Label, Form, Input, FormGroup, Col, Table, Button, Modal, ModalHeader, ModalBody } from "reactstrap";
 import { Link } from "react-router-dom";
 
+const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
+
 class StoreOwner extends Component{
 
     state = {

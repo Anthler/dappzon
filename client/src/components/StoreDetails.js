@@ -5,6 +5,7 @@ import { loadWeb3, loadBlockchainData } from "../utils/init";
 import { Link } from "react-router-dom";
 import { Card, Modal, CardText, Button, CardHeader, CardImg, CardFooter, Label, Form, Input, FormGroup, Col,
     CardBody,CardTitle, CardTextModal, ModalHeader, ModalBody  } from 'reactstrap';
+const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
 
 class StoreDetails extends Component{
 
@@ -114,8 +115,8 @@ class StoreDetails extends Component{
                                         <CardBody>
                                         <CardTitle><strong>Stock: </strong>{product.quantity}</CardTitle>
                                         <CardText><strong> Price:</strong> {this.state.web3.utils.fromWei(product.price, 'ether')} <strong>ETH</strong></CardText>
-                                        <CardText>With  a natural lead-in to additional content.</CardText>
-                                            <Button onClick={() => this.toggleModal(product)}  color="primary">Order</Button>
+                                        {/* <CardText>With  a natural lead-in to additional content.</CardText> */}
+                                            <Button color="primary" className="btn btn-block" onClick={() => this.toggleModal(product)}>Buy Now</Button>
                                         </CardBody>
                                     </Card>
                                 </div>
@@ -127,9 +128,9 @@ class StoreDetails extends Component{
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader>Order Product</ModalHeader>
                     <ModalBody>
-                        <p><strong> Your Address:</strong>  {this.state.currentUser}</p>
-                        <p><strong> Contract Address:</strong> {this.state.address}</p>
-                        <p><strong> Order Total ETH:</strong> { this.state.isModalOpen ? window.web3.utils.fromWei(window.web3.utils.toBN(this.state.price * this.state.quantity), "ether") : null}</p>
+                        <p><strong><span style={{color: "#565454"}}> Your Current Address: </span></strong> <span style={{color: "green"}}> {this.state.currentUser} </span></p>
+                        <p><strong><span style={{color: "#565454"}}> Contract Address:</span></strong><span style={{color: "green"}}> {this.state.address} </span></p>
+                        <p><strong><span style={{color: "#565454"}}> Order Total ETH:</span></strong> <span style={{color: "green"}}>{ this.state.isModalOpen ? window.web3.utils.fromWei(window.web3.utils.toBN(this.state.price * this.state.quantity), "ether") : null}</span></p>
                         <Form onSubmit={this.handleModalSubmit} >
                             <FormGroup>
                                 <Label htmlFor="quantity">Quantity</Label>
