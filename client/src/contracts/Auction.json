@@ -1,0 +1,124 @@
+{
+  "contractName": "Auction",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.3+commit.8dda9521\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/richix/Desktop/CONSENSYS-SCHOLAR/BOXES/decentralized-market/contracts/Auction.sol\":\"Auction\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/richix/Desktop/CONSENSYS-SCHOLAR/BOXES/decentralized-market/contracts/Auction.sol\":{\"keccak256\":\"0x701c549814c3b6ad9a39771644dafe96d637a3fc069ee3cc5d8238ddef2634e6\",\"urls\":[\"bzz-raw://c6f344b8ea3e89e954d5144e07a78bd43f569b257f0e26f0ef96fa086594bf50\",\"dweb:/ipfs/QmUxFMJ3ZUDMYzFsSwMoEndmA88GPEwdgj8t77AHfZzPb5\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212201e1ad3d8ff65fc09cca499c567eaca638300ac82480cf9ae7832787a0900c6db64736f6c63430006030033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212201e1ad3d8ff65fc09cca499c567eaca638300ac82480cf9ae7832787a0900c6db64736f6c63430006030033",
+  "sourceMap": "60:2973:0:-:0;;;;5:9:-1;2:2;;;27:1;24;17:12;2:2;60:2973:0;;;;;;;",
+  "deployedSourceMap": "60:2973:0:-:0;;;12:1:-1;9;2:12",
+  "source": "pragma solidity ^0.6.3;\npragma experimental ABIEncoderV2;\n\n\ncontract Auction {\n\n//     mapping(uint => Auction) public auctions;\n//     uint public auctionsCount;\n//     Auction[] public auctionsCollection;\n\n// struct Auction{\n//         uint productId;\n//         uint highestBid;\n//         address payable highestBidder;\n//         bool finalized;\n//         uint validUntil;\n//         uint bidsCount;\n//         mapping(uint => Bid) bids;\n//     }\n\n//     struct Bid{\n//         uint auctionId;\n//         uint amount;\n//         address payable bidder;\n//     }\n\n\n//     function auctionProduct(\n//         uint productId,\n//         uint _validUntil\n//     )  \n//         public \n//         onlyOwner\n//         validProduct(productId)\n//     {\n//         require(products[productId].quantity > 0, \"Not enough stock\");\n//         uint auctionId = auctionsCount;\n//         auctions[auctionId] = Auction({\n//             productId: productId, \n//             highestBid:0, \n//             highestBidder: address(0),\n//             validUntil: _validUntil,\n//             finalized: false,\n//             bidsCount: 0\n//         });\n//         products[productId].quantity -= 1;\n//         auctionsCount++;\n//     }\n\n//     function bid(uint auctionId, uint amount) public payable{\n//         require(msg.value >= amount, \"You must provide ether equal to amount specified\");\n//         require(!auctions[auctionId].finalized, \"You cannot bid on finalized auctions\");\n//         require(now <= auctions[auctionId].validUntil, \"You cannot bid on auction\");\n//         require(amount > auctions[auctionId].highestBid, \"You must provide ether more than current highest bidder\" );\n//         require(msg.sender != address(0), \"Please provide a valid address\" );\n\n//         uint bidId = auctions[auctionId].bidsCount;\n//         auctions[auctionId].bids[bidId] = Bid({auctionId: auctionId, amount: amount, bidder: msg.sender});\n//         if(auctions[auctionId].highestBid > 0 && auctions[auctionId].highestBidder != address(0)) {\n//             auctions[auctionId].highestBidder.transfer(auctions[auctionId].highestBid);\n//         }\n//         auctions[auctionId].highestBidder = msg.sender;\n//         auctions[auctionId].highestBid = amount;\n//         auctions[auctionId].bidsCount += 1;\n\n//         uint amountToRefund = msg.value - amount;\n//         if(amountToRefund > 0) msg.sender.transfer(amountToRefund);\n//         emit BidCreated(bidId);\n//     }\n\n//     function finalizeAuction(uint _auctionId) public payable onlyOwner{\n//         require(_auctionId < auctionsCount, \"Invalid auction ID\");\n//         require(now > auctions[_auctionId].validUntil, \"Auction can only finalize after validity period\");\n//         require(!auctions[_auctionId].finalized, \"auction not finalized\");\n//         auctions[_auctionId].finalized = true;\n//         products[auctions[_auctionId].productId].sales += 1; \n//         emit AuctionEnded(auctions[_auctionId].highestBidder, _auctionId, auctions[_auctionId].highestBid);\n//     }\n\n}",
+  "sourcePath": "/home/richix/Desktop/CONSENSYS-SCHOLAR/BOXES/decentralized-market/contracts/Auction.sol",
+  "ast": {
+    "absolutePath": "/home/richix/Desktop/CONSENSYS-SCHOLAR/BOXES/decentralized-market/contracts/Auction.sol",
+    "exportedSymbols": {
+      "Auction": [
+        3
+      ]
+    },
+    "id": 4,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".3"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "id": 2,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:0"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 3,
+        "linearizedBaseContracts": [
+          3
+        ],
+        "name": "Auction",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 4,
+        "src": "60:2973:0"
+      }
+    ],
+    "src": "0:3033:0"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/richix/Desktop/CONSENSYS-SCHOLAR/BOXES/decentralized-market/contracts/Auction.sol",
+    "exportedSymbols": {
+      "Auction": [
+        3
+      ]
+    },
+    "id": 4,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".3"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "id": 2,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:0"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 3,
+        "linearizedBaseContracts": [
+          3
+        ],
+        "name": "Auction",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 4,
+        "src": "60:2973:0"
+      }
+    ],
+    "src": "0:3033:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.3+commit.8dda9521.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-05-21T23:33:36.877Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
