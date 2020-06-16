@@ -2439,10 +2439,67 @@
       "links": {},
       "address": "0xbce27Af64521786b1a6cD34e2dDB717f493F07C4",
       "transactionHash": "0x6cfc7ca6e63c4ff75ac782f54485cfd562f2758d28910a54592fb66f6247c06a"
+    },
+    "1592228847197": {
+      "events": {
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf8a73eD4aFe38efCd7A7ac7a409Fe972B2912966",
+      "transactionHash": "0xbb2b2cbd4e4cc848ceb2e70600c95da841efbe6442dff0a95886150c5f66e7e9"
     }
   },
   "schemaVersion": "3.1.0",
-  "updatedAt": "2020-06-06T14:57:06.531Z",
+  "updatedAt": "2020-06-15T13:48:00.357Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {

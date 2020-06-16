@@ -8391,10 +8391,36 @@
       "links": {},
       "address": "0xbA0e90B86e46dE4643a0240E308E28E60aD61c2C",
       "transactionHash": "0xc4c63dca3800d9a6253b0faf5e18cefbe9d54946dd953a445183c723868bc949"
+    },
+    "1592228847197": {
+      "events": {
+        "0x149a3f0b13d03805d9ca97808693784d65431d28ee20c1aeea798c093f4c09d1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "storeId",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "marketplaceAddress",
+              "type": "address"
+            }
+          ],
+          "name": "StoreCreated",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x18d2381142BaF3280418EcAcb0B4F57B9fFB1BC0",
+      "transactionHash": "0x58bc6b827d7a36400f645ee6ed72f2d47a374628671b28a0d31694e49cb028f7"
     }
   },
   "schemaVersion": "3.1.0",
-  "updatedAt": "2020-06-06T14:56:07.996Z",
+  "updatedAt": "2020-06-15T13:47:59.302Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
