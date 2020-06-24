@@ -37,8 +37,8 @@ contract("StoreFactory", (accounts) => {
         const name = "Richard's shop";
         const description = "Richard shop description";
 
-        describe("Tests for createNewStore function", () => {
-            it("Creates a new store with non store owner account", async () => {
+        describe("Tests for createNewStore()", () => {
+            it("Reverts transaction from unapproved store owner's account", async () => {
                 await expectRevert.unspecified(storeFactory.createNewStore(beneficiary, name, description, {from: accounts[0]}));
             })
 
@@ -52,7 +52,7 @@ contract("StoreFactory", (accounts) => {
                 assert.equal(status, true, `Account ${accounts[2]} must be an approved store owner`)
             })
 
-            it("Creates new store", async () => {
+            it("Creates a new store", async () => {
                 //await storeFactory.addStoreOwner(accounts[2], {from: accounts[0]})
                 const tx = await storeFactory.createNewStore(beneficiary, name, description, {from:accounts[2]} )
                 assert.equal(tx.receipt.status, true, "Store should be created by approved store owner")
@@ -98,21 +98,83 @@ contract("StoreFactory", (accounts) => {
                 assert.equal(countAfter - countBefore, 1, "Stores count must be equal to 2")
             })
 
-            // it("Emits StoreCreated event", async () => {
-            //     const tx = await storeFactory.createNewStore(beneficiary, name, description, {from:accounts[2]} )
-            //     expectEvent(tx, "OwnershipTransferred", {from: accounts[2]})
-            // })
-
-            // it("Tests for StoreCreated event with correct account", async () => {
-            //     const reciept = await storeFactory.createNewStore(beneficiary, name, description, {from:accounts[2]} )
-            //     assert.equal(reciept, true, "Store should be created by approved store owner")
-            //     expectEvent()
-            // })
-
-            // add store owner by supper admin
-            // create store by an approved store owner
-            //
+            it("Emits StoreCreated event", async () => {
+                const tx = await storeFactory.createNewStore(beneficiary, name, description, {from:accounts[2]} )
+                expectEvent(tx, "StoreCreated")
+            })
 
         })
-    })
+
+        describe("Tests for addAdmins()", () => {
+            it("Reverts when called with non supper admin address", async () => {
+                await expectRevert.unspecified(storeFactory.addAdmins(accounts[5], {from: accounts[6]}))
+            })
+
+            it("Adds new admin", async () => {
+                await storeFactory.addAdmins(accounts[5], {from: accounts[0]})
+            })
+
+            it("Reverts when account is already an admin", async () => {
+                await expectRevert.unspecified(storeFactory.addAdmins(accounts[5],{from: accounts[0]}))
+            })
+        })
+
+        describe("Tests for removeAdmins()", () => {
+
+            it("reverts if account not already an admin", async () => {
+                await expectRevert.unspecified(storeFactory.removeAdmins(accounts[7], {from: accounts[0]}))
+            })
+
+            it("reverts if not called from super admin account", async () => {
+                await expectRevert.unspecified(storeFactory.removeAdmins(accounts[5], {from: accounts[1]}))
+ 
+            })
+
+            it("removes admin account", async () => {
+                await storeFactory.removeAdmins(accounts[5], {from: accounts[0]})
+            })
+        })
+
+        describe("Tests addStoreOwner()", () => {
+
+            it("reverts if account already an approved store owner", async () => {
+                await storeFactory.addStoreOwner(accounts[3], {from: accounts[0]})
+            })
+
+            it("reverts if from account is not an admin or super admin", async () => {
+                await expectRevert.unspecified(storeFactory.addStoreOwner(accounts[4], {from: accounts[1]}))
+            })
+
+            it("passes when called with an admin account", async () => {
+                await storeFactory.addAdmins(accounts[6], {from: accounts[0]})
+                await storeFactory.addStoreOwner(accounts[7], {from: accounts[6]})
+            })
+        })
+
+        describe("Tests removeStoreOwner()", () => {
+
+            it("reverts if account not already a store owner", async () => {
+                await expectRevert.unspecified(storeFactory.removeStoreOwner(accounts[6], {from: accounts[6]}))
+            })
+
+            it("reverts when called by non admin or super admin", async () => {
+                await expectRevert.unspecified(storeFactory.removeStoreOwner(accounts[7], {from:accounts[1]}))
+            })
+
+            it("removes account from store owner mapping", async () => {
+                await storeFactory.removeStoreOwner(accounts[7], {from: accounts[6]})
+            })
+        })
+
+        describe("Tests for getAllStores()", () => {
+
+            it("tests for difference between stores length array", async () => {
+                const storesCountBefore = await storeFactory.getAllStores();
+                await storeFactory.addStoreOwner(accounts[7], {from: accounts[6]})
+                await storeFactory.createNewStore(beneficiary, name, description, {from: accounts[7]});
+                const storesCountAfter = await storeFactory.getAllStores();
+                assert.equal(storesCountAfter.length - 1, storesCountBefore.length, "stores count before and after must have a difference of one")
+            })
+        })
+    }) 
 })

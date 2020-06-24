@@ -61,7 +61,7 @@ contract StoreFactory{
         require(isAdmin[_admin], "Address not already an admin");
         isAdmin[_admin] = false;
     }
-
+    
     function addStoreOwner(address payable _owner) public onlyAdmins{
         require(!isApprovedStoreOwner[_owner], "Account already an approved store owner");
         isApprovedStoreOwner[_owner] = true;
@@ -78,11 +78,6 @@ contract StoreFactory{
 
     function getAllStores() public view returns(Store[] memory _allStores){
         _allStores = storesCollection;
-        // uint size = storesCount - 1 ;
-        // allStores = new Store[](size);
-        // for(uint i = 0; i <= size; i++ ){
-        //     allStores[i] = stores[i];
-        // }
     }
 
     function getOwnerStoresCount(address owner) public view returns(uint _storesCount){
@@ -91,20 +86,10 @@ contract StoreFactory{
 
     function getOwnerStores(address _owner) public view returns(Store[] memory _ownerStores){
         _ownerStores = ownerStores[_owner];
-        // require(isApprovedStoreOwner[_owner], "This address is not a store owner");
-        // uint count = getOwnerStoresCount(_owner) - 1;
-        // for(uint i = 0; i <= count; i++){
-        //     _stores[i] = ownerStores[_owner][i];
-        // } 
     }
 
     function getMyStores() public view returns(Store[] memory _myStores){
         _myStores = ownerStores[msg.sender];
-        // require(isApprovedStoreOwner[msg.sender], "This address is not a store owner");
-        // uint count = getOwnerStoresCount(msg.sender) - 1;
-        // for(uint i = 0; i <= count; i++){
-        //     _myStores[i] = ownerStores[msg.sender][i];
-        // } 
     }
 
     function getIsApprovedStoreOwner() public view returns(bool){

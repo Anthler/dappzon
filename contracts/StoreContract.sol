@@ -158,7 +158,7 @@ contract Store is Ownable, Pausable{
     }
 
     function addProduct(
-        string memory name,
+        string memory _name,
         string memory desc, 
         uint price, 
         uint quantity,
@@ -178,7 +178,7 @@ contract Store is Ownable, Pausable{
         uint productId = productCount;
         Product storage product = products[productId];
         product.id = productId;
-        product.name = name;
+        product.name = _name;
         product.description = desc;
         product.price = price;
         product.quantity = quantity;
