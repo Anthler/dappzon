@@ -1,0 +1,12 @@
+MNEMONIC=grief violin lava audit balance casual veteran student suspect blur laugh clutch
+
+# Use: local (for ganache or develop deployment), dev, stag or prod
+NODE_ENV=dev
+
+INFURA_KEY=3baae2e6c67c435689a674e3634cc8b2
+
+PROVIDER_URL=https://rinkeby.infura.io/v3/
+
+DEPLOYED_ADDRESS=0x8aCee4b809B0001296bAD17dbF50f0E699058479
+FROM=0x1781BD8BB7C48DE5C77650bF0795328ba41DC46e
+DCTCOIN=0x4E70EB6aB60E344FDE6236cb1E2BeD170C6Dba5e
