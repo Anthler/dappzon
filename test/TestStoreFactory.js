@@ -6,7 +6,6 @@ contract("StoreFactory", (accounts) => {
 
     let store;
     let storeFactory;
-    let superAdmin;
     let storesCount;
 
     before(async () => {
@@ -15,7 +14,7 @@ contract("StoreFactory", (accounts) => {
 
     describe("Contract initialization", () => {
         it("Test for successful deployment", async () => {
-            const factory = StoreFactory.deployed();
+            const factory = await StoreFactory.deployed();
             assert(factory, "Contract deployment was not successful")
         })
 
@@ -29,7 +28,6 @@ contract("StoreFactory", (accounts) => {
             assert.equal(storesCollection.length, 0, "Stores collection must be zero initially")
         })
     })
-
 
     describe("Test for functions", async () => {
 

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import getWeb3 from "../utils/getWeb3";
+// import getWeb3 from "../utils/getWeb3";
 import Store from "../contracts/Store.json";
 import { loadWeb3 } from "../utils/init";
 import { Table } from "reactstrap";
@@ -17,11 +17,10 @@ class Orders extends Component{
     }
 
     componentDidMount = async () => {
-        let web3, account,instance;
+        let web3,instance;
         loadWeb3();
         web3 = window.web3;
-        account = await web3.currentProvider.selectedAddress
-        instance = new window.web3.eth.Contract(
+        instance = new web3.eth.Contract(
         Store.abi,this.props.address)
         const ordersCount = await instance.methods.ordersCount().call();
         let orders = [];

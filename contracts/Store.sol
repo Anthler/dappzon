@@ -7,6 +7,10 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 interface IERC20 {
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    
+    event Approval(address indexed owner, address indexed spender, uint256 value);
     
     function transfer(address to, uint256 value) external returns (bool);
 
@@ -19,10 +23,6 @@ interface IERC20 {
     function balanceOf(address who) external view returns (uint256);
     
     function allowance(address owner, address spender) external view returns (uint256);
-    
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    
-    event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
 contract Store is Ownable, Pausable{
@@ -32,19 +32,17 @@ contract Store is Ownable, Pausable{
     string public name;
     string public description;
     bool public isOpen;
-
     address payable public beneficiary;
-
     uint public productCount;
-    mapping(uint => Product) public products;
-    Product[] public productsCollection;
-
     uint public ordersCount;
-    mapping(uint => Order) public orders;
-
-    mapping(address => Order[]) public customerOrders;
 
     address public tokenContract;
+
+    Product[] public productsCollection;
+
+    mapping(uint => Product) public products;
+    mapping(uint => Order) public orders;
+    mapping(address => Order[]) public customerOrders;
 
     enum OrderStatus{ Recieved, Proccessing, Delivered, Cancelled}
 
@@ -134,7 +132,9 @@ contract Store is Ownable, Pausable{
         {
         require(_quantity > 0 && _productId > 0, "You must atleast purchase one item");
         uint amount = products[_productId].price * _quantity;
+        // uint amountToRefund =  msg.value - amount;
         require(IERC20(tokenContract).allowance(msg.sender, address(this)) >= amount, "Please approve the amount of tokens to this contract address");
+        Product storage product = products[_productId];
         IERC20(tokenContract).transferFrom(msg.sender, address(this), amount);
         ordersCount++;
         Order storage order = orders[ordersCount];
@@ -142,12 +142,19 @@ contract Store is Ownable, Pausable{
         order.productId = _productId;
         order.amountPaid = amount;
         order.datePurchased = now;
+        order.buyer = msg.sender;
+        order.productQuantity = _quantity;
         order.status = OrderStatus.Recieved;
         products[_productId].quantity -=_quantity;
         products[_productId].sales +=_quantity;
         products[_productId].orders.push(order.id);
         customerOrders[msg.sender].push(order);
         products[_productId].buyers.push(msg.sender);
+        for(uint i = 0; i < productsCollection.length; i++){
+            if(productsCollection[i].id == _productId){
+                productsCollection[i] = product;
+            }
+        }
         emit ProductPurchased(_productId, msg.sender);
     }
 
@@ -231,18 +238,17 @@ contract Store is Ownable, Pausable{
         emit ProductPurchased(productId, msg.sender);
     }
 
-    function cancelOrderAndRefund(uint id) public onlyOwner() whenNotPaused() returns(bool){
-        require(id > 0 , "Order id invalid");
-        require(orders[id].status != OrderStatus.Delivered, "Delivered orders cned be processed");
-        Order storage order = orders[id];
-        order.status = OrderStatus.Cancelled;
-        products[order.productId].quantity.add(order.productQuantity);
-        order.buyer.transfer(order.amountPaid);
-        return true;
-    }
+    // function cancelOrderAndRefund(uint id) public onlyOwner() whenNotPaused() returns(bool){
+    //     require(id > 0 , "Order id invalid");
+    //     require(orders[id].status != OrderStatus.Delivered, "Delivered orders cned be processed");
+    //     Order storage order = orders[id];
+    //     order.status = OrderStatus.Cancelled;
+    //     products[order.productId].quantity.add(order.productQuantity);
+    //     order.buyer.transfer(order.amountPaid);
+    //     return true;
+    // }
 
     function withdrawBalance() public payable onlyOwner() whenNotPaused()  {
         beneficiary.transfer(address(this).balance);
     }
 }
-

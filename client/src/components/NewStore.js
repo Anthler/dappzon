@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import getWeb3 from "../utils/getWeb3";
-import StoreFactory from "../contracts/StoreFactory.json";
 import { loadWeb3, loadBlockchainData } from "../utils/init";
 import { Label, Form, Input,Button, FormGroup, Col } from "reactstrap";
 
@@ -25,7 +23,7 @@ class NewStore extends Component{
             contract = await loadBlockchainData()
             web3 = window.web3;
             currentUser = await web3.currentProvider.selectedAddress
-            this.setState({web3,contract,web3,currentUser})
+            this.setState({contract,web3,currentUser})
   
           } catch (error) {
             console.log(error.message)
@@ -42,7 +40,6 @@ class NewStore extends Component{
     }
 
     handleInputChange = (event) => {
-        
         const target = event.target;
         const value = target.value;
         const name = target.name;

@@ -53,13 +53,12 @@ class Header extends Component{
                     </Collapse>
                     </div>
                 </Navbar>
-                <Jumbotron>
-                    <div className="container" >
+                <Jumbotron style={{marginBottom: "100px"}}>
+                    <div className="container">
                         <div className="row row-header">
                             <div className="col-12 col-sm-6">
                                 <h2 style={{color: "#5e5d5d"}}>DAPPY MALL</h2>
                                 <p style={{color: "#775dba"}}>Shop From Your Favorite Shops Online With ERC20 Tokens & Ether</p>
-                                {/* <p style={{color: "#565454"}}>By Any Product From Any Shop Using ERC20 Tokens and Ether</p> */}
                             </div>
                         </div>
                     </div>

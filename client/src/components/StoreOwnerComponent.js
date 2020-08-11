@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import getWeb3 from "../utils/getWeb3";
-import StoreFactory from "../contracts/StoreFactory.json";
+// import getWeb3 from "../utils/getWeb3";
+// import StoreFactory from "../contracts/StoreFactory.json";
 import Store from "../contracts/Store.json";
 import { loadWeb3, loadBlockchainData } from "../utils/init";
-import { Label, Form, Input, FormGroup, Col, Table, Button, Modal, ModalHeader, ModalBody } from "reactstrap";
+import { Label, Form, Input, FormGroup, Table, Button, Modal, ModalHeader, ModalBody } from "reactstrap";
 import { Link } from "react-router-dom";
 
 const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
@@ -169,7 +169,7 @@ class RenderStoresTable extends Component{
     handleModalSubmit = async (e) =>{
         this.toggleModal()
         e.preventDefault();
-        const tx = await this.state.contract.methods.addProduct(this.description.value ,this.description.value, window.web3.utils.toWei((this.price.value)), this.quantity.value, this.imageUrl.value).send({from:this.state.storeOwner})
+        const tx = await this.state.contract.methods.addProduct(this.name.value ,this.description.value, window.web3.utils.toWei((this.price.value)), this.quantity.value, this.imageUrl.value).send({from:this.state.storeOwner})
         if(tx){
             window.location.reload()
         }

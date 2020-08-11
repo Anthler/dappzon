@@ -1,6 +1,6 @@
 pragma solidity 0.6.3;
 
-import "./StoreContract.sol";
+import "./Store.sol";
 
 contract StoreFactory{
 
@@ -62,12 +62,12 @@ contract StoreFactory{
         isAdmin[_admin] = false;
     }
     
-    function addStoreOwner(address payable _owner) public onlyAdmins{
+    function addStoreOwner(address _owner) public onlyAdmins{
         require(!isApprovedStoreOwner[_owner], "Account already an approved store owner");
         isApprovedStoreOwner[_owner] = true;
     }
 
-    function removeStoreOwner(address payable _owner) public onlyAdmins{
+    function removeStoreOwner(address _owner) public onlyAdmins{
         require(isApprovedStoreOwner[_owner], "Account not an approved store owner");
         isApprovedStoreOwner[_owner] = false;
     }

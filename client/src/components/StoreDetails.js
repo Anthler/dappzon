@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import getWeb3 from "../utils/getWeb3";
+// import getWeb3 from "../utils/getWeb3";
 import Store from "../contracts/Store.json";
-import { loadWeb3, loadBlockchainData } from "../utils/init";
-import { Link } from "react-router-dom";
-import { Card, Modal, CardText, Button, CardHeader, CardImg, CardFooter, Label, Form, Input, FormGroup, Col,
-    CardBody,CardTitle, CardTextModal, ModalHeader, ModalBody  } from 'reactstrap';
+import { loadWeb3 } from "../utils/init";
+import { Card, Modal, CardText, Button, CardHeader, CardImg, Label, Form, Input, FormGroup,
+    CardBody,CardTitle, ModalHeader, ModalBody, CardSubtitle  } from 'reactstrap';
 const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
 
 class StoreDetails extends Component{
@@ -27,7 +26,7 @@ class StoreDetails extends Component{
     }
 
     componentDidMount = async () => {
-        let instance, currentUser, web3, price, name,address, description, products;
+        let instance, currentUser, web3, name,address, description, products;
         loadWeb3();
         web3 = window.web3;
         currentUser = await web3.currentProvider.selectedAddress
@@ -36,7 +35,6 @@ class StoreDetails extends Component{
         this.props.address
         );
         name = await instance.methods.name().call();
-        const owner = await instance.methods.owner().call();
         address = await instance.options.address
         description = await instance.methods.description().call();
         products = await instance.methods.getProductsCollection().call();
@@ -51,9 +49,8 @@ class StoreDetails extends Component{
         const {productId, price, quantity, currentUser} = this.state;
        e.preventDefault();
        this.setState({isModalOpen:false})
-       const total = window.web3.utils.toBN(this.state.price*this.state.quantity)
+       const total = window.web3.utils.toBN(price*quantity)
        if(this.state.currency === "DTC"){
-           console.log("DTC")
            try {
                const tx = await this.state.contract.methods.payWithDCTCoin(productId, quantity).send({from: currentUser});
                 if(tx){
@@ -80,43 +77,38 @@ class StoreDetails extends Component{
     }
 
     handleInputChange = (event) => {
-        
         const target = event.target;
         const value = target.value;
         const name = target.name;
         this.setState({
             [name]: value
         });
-        console.log(this.state.quantity)
     }
 
     render(){
         return(
             <div className="container">
                 <div className="row">
-                    <div className="col-md-5 mb-5 offset-4">
-                        <h2> {this.state.name} </h2>
+                    <div className="col-md-5 mb-4 offset-4">
+                        <h2 style={{color: "#7863cc"}}> {this.state.name.toUpperCase()} </h2>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-5 mb-5 offset-4">
                     </div>
                 </div>
-                
-
-                <div className="row">
+                <div className="row mb-5">
                     {
                         this.state.products.map( product => {
                             return (
-                                <div key={product} className="col-md-5 mr-2">
-                                    <Card>
-                                        <CardHeader tag="h4">{product.description}</CardHeader>
-                                        <CardImg top width="100%" src={product.imageUrl} alt={product.name} />
+                                <div key={product} className="col-md-4 mb-5">
+                                    <Card maxWidth="30%">
+                                        <CardImg top width="100%" height="300px" src={product.imageUrl} alt={product.name} />
+                                        <CardHeader tag="h4" style={{textAlign: "center", color: "#7165a3", fontSize: "22px"}}>{product.name}</CardHeader>
                                         <CardBody>
-                                        <CardTitle><strong>Stock: </strong>{product.quantity}</CardTitle>
-                                        <CardText><strong> Price:</strong> {this.state.web3.utils.fromWei(product.price, 'ether')} <strong>ETH</strong></CardText>
-                                        {/* <CardText>With  a natural lead-in to additional content.</CardText> */}
-                                            <Button color="primary" className="btn btn-block" onClick={() => this.toggleModal(product)}>Buy Now</Button>
+                                        <CardSubtitle style={{color: "#615c72", fontSize: "20px"}}><strong> Price:</strong> {`${this.state.web3.utils.fromWei(product.price, 'ether')}0`}<strong> ETH/</strong></CardSubtitle>
+                                        <CardTitle style={{ color: "#615c72", fontSize: "20px"}}><strong>Stock: </strong>{product.quantity}</CardTitle>
+                                            <Button style={{backgroundColor: "#7863cc"}} className="btn btn-block" onClick={() => this.toggleModal(product)}>Buy</Button>
                                         </CardBody>
                                     </Card>
                                 </div>
@@ -125,12 +117,12 @@ class StoreDetails extends Component{
                     }
                 </div>
 
-                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
-                    <ModalHeader>Order Product</ModalHeader>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} style={{color: "#7165a3", fontWeight:"bold"}} >
+                    <ModalHeader style={{color: "#7165a3", textAlign:"center", fontWeight:"bold"}}>ORDER PRODUCT</ModalHeader>
                     <ModalBody>
-                        <p><strong><span style={{color: "#565454"}}> Your Current Address: </span></strong> <span style={{color: "green"}}> {this.state.currentUser} </span></p>
-                        <p><strong><span style={{color: "#565454"}}> Contract Address:</span></strong><span style={{color: "green"}}> {this.state.address} </span></p>
-                        <p><strong><span style={{color: "#565454"}}> Order Total ETH:</span></strong> <span style={{color: "green"}}>{ this.state.isModalOpen ? window.web3.utils.fromWei(window.web3.utils.toBN(this.state.price * this.state.quantity), "ether") : null}</span></p>
+                        <p><strong><span> Your Current Address: </span></strong> <span style={{color: "green"}}> {this.state.currentUser} </span></p>
+                        <p><strong><span> Contract Address:</span></strong><span style={{color: "green"}}> {this.state.address} </span></p>
+                        <p><strong><span> Order Total ETH:</span></strong> <span style={{color: "green"}}>{ this.state.isModalOpen ? window.web3.utils.fromWei(window.web3.utils.toBN(this.state.price * this.state.quantity), "ether") : null}</span></p>
                         <Form onSubmit={this.handleModalSubmit} >
                             <FormGroup>
                                 <Label htmlFor="quantity">Quantity</Label>
@@ -153,7 +145,7 @@ class StoreDetails extends Component{
                                 </Input>
                             </FormGroup>
                             
-                            <Button className="btn btn-small btn-success">Submit</Button>
+                            <Button className="btn btn-block" style={{backgroundColor: "#7863cc"}}>Submit</Button>
                         </Form>
                     </ModalBody>
                 </Modal>

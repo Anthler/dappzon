@@ -6,7 +6,6 @@ contract DCTCoin is ERC20 {
     address payable public admin;
     constructor() ERC20("Decent Coin", "DCT") public {
         admin = msg.sender;
-        _mint(admin, 1000000000000000000000);
     }
 
     function mint(uint _amount) public{

@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import StoreFactory from "../contracts/StoreFactory.json";
-import { BrowserRouter} from "react-router-dom";
-import { Route, Switch, Redirect, withRouter } from "react-router-dom";
-
-import Web3 from "web3";
+import { Route, Switch, Redirect } from "react-router-dom";
 import MetamaskAlert from "./MetamaskAlert";
 import Header from "./HeaderComponent";
 import Home from "./HomeComponent";
@@ -12,8 +9,7 @@ import StoreOwner from "./StoreOwnerComponent";
 import SuperAdmin from "./SuperAdminComponent";
 import Orders from "./OrdersComponent";
 import StoreDetails from "./StoreDetails";
-import { loadWeb3, loadBlockchainData } from "../utils/init";
-import getWeb3 from "../utils/getWeb3";
+import { loadWeb3 } from "../utils/init";
 
 const deployed_rinkeby_address = "0x8aCee4b809B0001296bAD17dbF50f0E699058479";
 
@@ -86,7 +82,6 @@ class Main extends Component {
         </Switch>
       </div>
     );
-   // }
   }
 }
 
