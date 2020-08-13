@@ -1,4 +1,4 @@
-# Chained Bounties
+# Dappzon
 Buy and sell with cryptocurrencies.
 ## What do we do
  Dappzon is decentralized markeplace platform that leverages ethereum Blockchain technology, to enable shop owners, buyers to buy and sell any product using cryptocurrencies and ERC20 tokens of their choice. 
