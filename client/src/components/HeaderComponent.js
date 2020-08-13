@@ -57,7 +57,7 @@ class Header extends Component{
                     <div className="container">
                         <div className="row row-header">
                             <div className="col-12 col-sm-6">
-                                <h2 style={{color: "#5e5d5d"}}>DAPPY MALL</h2>
+                                <h2 style={{color: "#5e5d5d"}}>DAPPZON MARKET</h2>
                                 <p style={{color: "#775dba"}}>Shop From Your Favorite Shops Online With ERC20 Tokens & Ether</p>
                             </div>
                         </div>
